@@ -8,6 +8,7 @@ import {
 
 const router = express.Router();
 
+console.log("called");
 router.post("/register", Register);
 router.get("/verifyUser", AuthenticateJWT, EmitVerification);
 router.get("/login", Login);

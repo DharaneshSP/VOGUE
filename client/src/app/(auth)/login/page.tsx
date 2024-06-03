@@ -14,7 +14,7 @@ const page = () => {
 
     axios
       .get(
-        `http://localhost:8000/api/auth/login?email=${email}&password=${password}`
+        `http://localhost:8000/api/auth/login?email=${email}&password=${password}`,
       )
       .then((response) => {
         let accessToken = response.data.accessToken;
