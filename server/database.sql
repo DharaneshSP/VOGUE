@@ -24,4 +24,3 @@ CREATE TABLE cart (
     FOREIGN KEY (product_id) REFERENCES products(id) ON DELETE CASCADE,
     UNIQUE(user_id, product_id) 
 );
-
