@@ -1,0 +1,16 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    volumes:
+      - ./data/pg_db:/var/lib/postgresql/data  
+    ports:
+      - 5555:5432
+    environment:
+      - POSTGRES_DB=auth3
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=12345678
+
+

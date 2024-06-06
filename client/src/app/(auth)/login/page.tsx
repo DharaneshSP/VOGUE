@@ -14,14 +14,14 @@ const page = () => {
 
     axios
       .get(
-        `http://localhost:8000/api/auth/login?email=${email}&password=${password}`,
+        `http://localhost:8000/api/auth/login?email=${email}&password=${password}`
       )
       .then((response) => {
         let accessToken = response.data.accessToken;
         localStorage.setItem("accessToken", accessToken);
         router.push("/");
       })
-      .catch((e) => console.log(e));
+      .catch((e) => alert(e));
   };
 
   return (

@@ -31,6 +31,34 @@ const page = () => {
       .catch((e) => console.log(e));
   }, []);
 
+  const handlepayment = (e: any) => {
+    e.preventDefault();
+
+    console.log(window);
+
+    const order_id="order_OJa5dmI3ghv4mN";
+
+    const options = {
+      key: "rzp_test_BId9XKXtg6oGMG", // Enter the Key ID generated from the Dashboard
+      amount: "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+      currency: "INR",
+      name: "dsp",
+      description: "dsp",
+      image: "https://example.com/your_logo",
+      order_id: order_id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+      callback_url: `http://localhost:8000/api/payment/verifyPayment?order_id=${order_id}`,
+      notes: {
+        address: "Razorpay Corporate Office",
+      },
+      theme: {
+        color: "#3399cc",
+      },
+    };
+
+    const razor = new window.Razorpay(options);
+    razor.open();
+  };
+
   return (
     <div className="flex flex-col justify-center items-center gap-3">
       {cartProducts?.map((products) => (
@@ -39,6 +67,7 @@ const page = () => {
           <div>{products.description}</div>
         </div>
       ))}
+      <button onClick={handlepayment}> Pay</button>
     </div>
   );
 };

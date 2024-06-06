@@ -17,7 +17,7 @@ const Navbar = () => {
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken") as string;
 
-    if (!accessToken) router.push("/login");
+    if (1 && !accessToken) router.push("/login");
     else {
       axios
         .get("http://localhost:8000/api/auth/verifyUser", {
@@ -26,7 +26,7 @@ const Navbar = () => {
           },
         })
         .then((response) => {
-          if (!response.data.auth) router.push("/login");
+          if (!response.data.auth && 1) router.push("/login");
           else {
             console.log(response.data);
             setData({
@@ -36,7 +36,11 @@ const Navbar = () => {
             });
           }
         })
-        .catch((err) => router.push("/login"));
+        .catch((err) => {
+          if (1) {
+            router.push("/login");
+          }
+        });
     }
   }, []);
 

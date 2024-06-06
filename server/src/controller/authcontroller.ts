@@ -61,13 +61,13 @@ export const Login = async (req: Request, res: Response) => {
     console.log(data);
 
     const accessToken = jwt.sign(data, ACCESS_TOKEN_SECRET, {
-      expiresIn: "10m",
+      expiresIn: "30hrs",
     });
 
     return res.status(200).json({ auth: true, accessToken: accessToken, data });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error.." });
   }
 };
 
@@ -108,13 +108,13 @@ export const verifyandSendOTP = async (req: Request, res: Response) => {
 };
 
 // REDIS
-
+/*
 import Redis from "redis";
 
 const redis = Redis.createClient();
 
 redis.on("error", (err) => {
-  console.error("Redis error:", err);
+  console.log("Redis error:");
 });
 
 redis.on("connect", () => {
@@ -179,3 +179,5 @@ export const Register1 = async (req: Request, res: Response) => {
   //res.json({ user: newUser.rows[0] });
   //res.json({ 1: 1 });
 };
+
+*/
