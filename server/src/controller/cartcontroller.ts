@@ -25,12 +25,18 @@ export const addToCart = async (req: Request, res: Response) => {
 export const getCart = async (req: Request, res: Response) => {
   const { user } = req.body;
   const id = user.user_id;
+  //const seller_id=await pool.query("SELECT seller_id FROM sellers where user_id = $1",[id]);
   const cartProducts = await pool.query(
-    "select * from products join cart on products.id = cart.product_id where user_id = $1",
+    "select * from products join cart on products.id = cart.product_id where cart.user_id = $1",
     [id]
   );
 
-  console.log(cartProducts.rows);
+//  console.log(cartProducts.rows);
+  //
 
-  return res.json({ data: cartProducts.rows });
+  console.log(cartProducts);
+
+  return res.json({1:cartProducts});
+
+ // return res.json({ data: cartProducts.rows });
 };

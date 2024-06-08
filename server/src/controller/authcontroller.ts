@@ -76,7 +76,7 @@ export const verifyandSendOTP = async (req: Request, res: Response) => {
   console.log(email);
   const user = await pool.query(
     "SELECT EXISTS (SELECT * FROM users WHERE email= $1)",
-    [email]
+    [email],
   );
 
   const userExist = user.rows[0].exists;

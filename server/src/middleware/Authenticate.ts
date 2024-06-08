@@ -11,7 +11,9 @@ export const AuthenticateJWT = (
   const authheader = req.headers["authorization"];
   const token = authheader && authheader.split(" ")[1];
 
-  console.log("t =", token);
+  //console.log(req.headers);
+
+  //console.log("t =", token);
 
   if (!token) res.status(401).send("Need token");
   else {
@@ -21,7 +23,7 @@ export const AuthenticateJWT = (
           .status(404)
           .send({ auth: false, message: "Failed to authenticate" });
       } else {
-        console.log(" a ", req.body);
+        //console.log(" a ", req.body);
         req.body.user = decoded;
         req.body.auth = true;
         next();

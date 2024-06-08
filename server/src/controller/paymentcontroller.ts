@@ -2,6 +2,7 @@ import { Request, Response, query } from "express";
 import { instance } from "../utils/razorClient.js";
 import { v4 as uuid } from "uuid";
 import crypto from "crypto";
+import pool from '../utils/pgclient.js';
 
 export const makeOrder = async (req: Request, res: Response) => {
    
@@ -43,10 +44,13 @@ export const verifypayment = async (req: Request, res: Response) => {
   if (generated_signature == razorpay_signature) {
     console.log("payment is successful..");
 
+     const result=await pool.query("UPDATE orders SET paymentDone=$1,payment_id=$2 WHERE id=$3",[true,"pay_oibsd",order_id]);
+
+   // call function to send an email to user and product distributors...  
+
     return res.redirect(`http://localhost:6969/paymentinfo?success=${true}&payment_id=${razorpay_payment_id}`);
   }
   
     return res.redirect(`http://localhost:6969/paymentinfo?success=${false}&payment_id=${razorpay_payment_id}`);
-
-
+     
  };
