@@ -31,8 +31,7 @@ const EmblaCarousel: React.FC<PropType> = (props) => {
       <div className="embla__viewport"  ref={emblaRef}>
         <div className="embla__container">
           {slidecontent.map((item) => (
-            <div className="embla__slide">
-                {console.log(item)} 
+            <div className="embla__slide">  
                 <div className="embla__slide__inner">
                 <Image src={item.img} alt="bg" layout="fill" objectFit="cover" />
               </div>

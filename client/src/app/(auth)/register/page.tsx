@@ -1,8 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+
+import { REGEXP_ONLY_DIGITS_AND_CHARS } from "input-otp"
+
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSeparator,
+  InputOTPSlot,
+} from "@/components/ui/input-otp"
+
 
 const page = () => {
   const [name, setName] = useState<string>("a");
@@ -11,8 +21,24 @@ const page = () => {
   const [otp, setOtp] = useState<string>("");
   const [show, setShow] = useState<boolean>(true);
   const [token, setToken] = useState<string>("");
+  const [seconds,setSeconds]=useState(30);
 
   const router = useRouter();
+
+
+useEffect(()=>{
+
+  if(!show){
+    
+    const interval=setInterval(()=>{
+       setSeconds((prevSeconds) => (prevSeconds > 0 ? prevSeconds - 1 : 0));
+    },1000)
+
+   return ()=>{ clearInterval(interval) }
+    
+  }
+
+},[show])
 
   /*
   const handlesubmit = (e: any) => {
@@ -57,6 +83,8 @@ const page = () => {
 
   const handlesubmit = (e: any) => {
     e.preventDefault();
+    setShow(!show);
+    return;
     axios
       .get(
         `http://localhost:8000/api/auth/initializeautentication1?email=${email}`
@@ -69,6 +97,8 @@ const page = () => {
 
   const sendOtp = (e: any) => {
     e.preventDefault();
+    alert(otp);
+    return;
     axios
       .post("http://localhost:8000/api/auth/verifyandregister1", {
         name: name,
@@ -82,7 +112,7 @@ const page = () => {
 
   return (
     <div className="h-screen border border-black flex justify-center items-center">
-      {show ? (
+      {show? (
         <form
           className="flex flex-col max-w-96 gap-2 w-1/2"
           onSubmit={handlesubmit}
@@ -119,15 +149,19 @@ const page = () => {
           </button>
         </form>
       ) : (
-        <form className="flex flex-col max-w-96 gap-2 w-1/2" onSubmit={sendOtp}>
-          <input
-            className="p-3 border border-black focus:outline-none"
-            type="number"
-            placeholder="Enter OTP"
-            pattern="[0-9]"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
+        <form className="flex flex-col" onSubmit={sendOtp}>
+          
+           <InputOTP value={otp} onChange={(value)=>setOtp(value)} maxLength={6} pattern={REGEXP_ONLY_DIGITS_AND_CHARS}>
+      <InputOTPGroup>
+        <InputOTPSlot index={0} className="p-5" />
+        <InputOTPSlot index={1} className="p-5" />
+        <InputOTPSlot index={2} className="p-5" />
+        <InputOTPSlot index={3} className="p-5" />
+        <InputOTPSlot index={4} className="p-5" />
+        <InputOTPSlot index={5} className="p-5" />
+      </InputOTPGroup>
+    </InputOTP>
+          <div>Time Remaining {seconds}s</div>
           <button
             type="submit"
             className="p-3 border border-black focus:outline-none"

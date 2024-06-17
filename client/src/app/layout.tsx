@@ -16,6 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
       <body>
         {children}
         <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
