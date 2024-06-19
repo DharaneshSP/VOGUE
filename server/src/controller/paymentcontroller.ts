@@ -8,6 +8,7 @@ import qr from 'qrcode'
 
 
 const RAZOR_PAY_SECRET_kEY = process.env.RAZOR_PAY_KEY_SECRET as string;
+const FRONTEND=process.env.NODE_ENV=="production"?process.env.FRONTEND:"http://localhost:6969"
 
 export const verifypayment = async (req: Request, res: Response) => {
   const order_id = req.query.order_id;
@@ -117,10 +118,10 @@ export const verifypayment = async (req: Request, res: Response) => {
 
     await sendEmails(items);
      
-    return res.redirect(`http://localhost:6969/paymentinfo?success=${true}&payment_id=${razorpay_payment_id}`);
+    return res.redirect(`${FRONTEND}/paymentinfo?success=${true}&payment_id=${razorpay_payment_id}`);
   }
   
-    return res.redirect(`http://localhost:6969/paymentinfo?success=${false}&payment_id=${razorpay_payment_id}`);
+    return res.redirect(`${FRONTEND}/paymentinfo?success=${false}&payment_id=${razorpay_payment_id}`);
      
  };
 
@@ -207,4 +208,94 @@ const sendEmails = async (items:any) => {
   } catch (error) {
     console.error('Error sending emails:', error);
   }
-};    
+};   
+
+
+export const payout=async(req:Request,res:Response)=>{
+
+    const {user}=req.body;
+
+
+try{
+    
+  console.log(user)
+
+    let id=user.user_id;
+    let name=user.user_name;
+    let email=user.user_email;
+
+    const wallet=await pool.query("SELECT wallet FROM sellers WHERE user_id=$1",[id]);
+
+    if(wallet.rows.length==0) throw new Error("No Seller found");
+
+    let amount=wallet.rows[0].wallet;
+    
+    await pool.query("UPDATE sellers SET wallet=0 WHERE user_id=$1",[id]);
+
+    console.log(wallet.rows,amount);
+
+      await mailTransporter.sendMail({
+    from: {
+      name: "VOGUE",
+      address: `devtest8055@gmail.com`,
+    },
+    to: ["dharaneshsp28@gmail.com"],
+    subject: "Thanks For Purchasing : Your Purchase Confirmation and Delivery Information",
+    html: `<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    .email-container {
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+    }
+    .header {
+      text-align: center;
+      background-color: #f8f8f8;
+      padding: 20px;
+    }
+    .body {
+      padding: 20px;
+    }
+    .footer {
+      text-align: center;
+      background-color: #f8f8f8;
+      padding: 10px;
+    }
+    .highlight {
+      color: #007bff;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1>Withdrawal Confirmation</h1>
+    </div>
+    <div class="body">
+      <p>Dear ${name},</p>
+      <p>We are pleased to inform you that your request to withdraw <span class="highlight">&#8377;${amount}</span> from your wallet to your bank account has been processed successfully.</p>
+      <p>The amount will be transferred to your bank account within the next <span class="highlight">24 hours</span>.</p>
+      <p>If you have any questions or need further assistance, please do not hesitate to contact our customer support team.</p>
+      <p>Thank you for being a valued seller with us. We appreciate your partnership!</p>
+      <p>Best regards,</p>
+      <p><strong>The VOGUE Team</strong></p>
+    </div>
+    <div class="footer">
+      <p>&copy; 2024 VOGUE. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>
+`
+    })
+
+    res.json({1:amount});
+}
+catch(err){
+
+    res.status(400).json({err:err});
+}
+
+}

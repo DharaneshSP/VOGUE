@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar";
+import HeroNavbar from "@/components/heronavbar";
 
 export default function Layout({
   children,
@@ -7,7 +7,7 @@ export default function Layout({
 }>) {
   return (
     <div>
-      <Navbar/> 
+      <HeroNavbar/> 
       {children}
     </div>
   );

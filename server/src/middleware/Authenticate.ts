@@ -10,6 +10,9 @@ export const AuthenticateJWT = (
 ) => {
   const authheader = req.headers["authorization"];
   const token = authheader && authheader.split(" ")[1];
+ 
+
+  console.log(token)
 
   if (!token) res.status(401).send("Need token");
   else {

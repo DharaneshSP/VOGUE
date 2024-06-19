@@ -17,7 +17,7 @@ const fashion = () => {
 
       <div className="lg:hidden pt-32 flex items-center justify-center">
         <div className="font-dancingscript text-center text-lg text-black">
-          Discover the latest fashion trends at [Your Company Name]. Shop high-quality clothing and accessories, enjoy secure transactions, and benefit from a user-friendly interface and excellent customer support. Your style, our priority
+          Discover the latest fashion trends here. Shop high-quality clothing and accessories, enjoy secure transactions, and benefit from a user-friendly interface and excellent customer support. Your style, our priority
         </div>
       </div>
 

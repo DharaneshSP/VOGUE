@@ -6,6 +6,7 @@ import EmblaCarousel from "@/components/emblacarousel";
 import HeroNavbar from "@/components/heronavbar";
 import Fashion from "@/components/fashion";
 import Services from "@/components/services";
+import Footer from '@/components/footer'
 
 const OPTIONS: EmblaOptionsType = { loop: true };
 const SLIDE_COUNT = 4;
@@ -26,6 +27,7 @@ const page = () => {
       <Services />
       <div className="min h-screen flex justify-center items-center bg-men bg-fixed bg-no-repeat bg-cover bg-center transition-smooth">
       </div>
+      <Footer/>
     </div>
   );
 };

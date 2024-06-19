@@ -3,7 +3,7 @@ CREATE TABLE users (
     email TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
     address TEXT,
-    mobile_no TEXT;
+    mobile_no TEXT,
     password TEXT NOT NULL
 );
 

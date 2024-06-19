@@ -69,7 +69,7 @@ const Page = () => {
   }
 
   return (
-    <div className="pt-[4rem]">
+    <div className="py-[4rem] h-full">
       <div className="fixed px-[4vw] py-4 flex border-black w-full gap-3 bg-white">
 
         <Input

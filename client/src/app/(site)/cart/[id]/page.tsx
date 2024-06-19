@@ -124,7 +124,7 @@ export default function Page() {
   }, 0);
 
   return (
-    <div className="container mx-auto py-12 pt-[12vh]">
+    <div className="container mx-auto py-12 pt-[12vh] mb-[4vh] h-full">
       <h1 className="text-2xl font-bold mb-6">Shopping Cart</h1>
       <div className="grid md:grid-cols-[1fr_300px] gap-8">
         <div className="space-y-6">
