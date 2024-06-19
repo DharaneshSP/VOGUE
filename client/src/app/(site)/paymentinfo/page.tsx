@@ -1,26 +1,17 @@
-
-"use client"
-
-import { useSearchParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-
-const page = () => {
-
-  const params=useSearchParams();
-  const [status,setStatus]=useState<boolean>(false);
-  const [payment_id,setpayment_id]=useState<string>("");
+"use client";
 
 
-  useEffect(()=>{
+import React, {Suspense } from "react";
+import PaymentStatus from '@/components/paymentstatus'
 
-    setStatus(params.get("success")==="true");
-    setpayment_id(params.get("payment_id"));
-
-  },[])
-
+const Page = () => {
   return (
-    <div>{(status)?"true":"false"} : {payment_id}</div>
-  )
-}
+    <div className="pt-[10vh] h-[90vh] w-full flex justify-center items-center">
+      <Suspense fallback={<div>Loading...</div>}>
+        <PaymentStatus />
+      </Suspense>
+    </div>
+  );
+};
 
-export default page
+export default Page;

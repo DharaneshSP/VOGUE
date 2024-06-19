@@ -9,101 +9,126 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableFooter
+  TableFooter,
 } from "@/components/ui/table";
-import {Button} from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import {BACKEND} from '@/utils/constants'
 
-import {orders} from "../../../../utils/products";
-
-interface order{
-  
-  id:string;
-  name:string;
-  price:number;
-  count:number;
-
+interface orderItem {
+  id: string;
+  name: string;
+  price: string;
+  count: number;
 }
 
-const page = ({ params }) => {
-  
-  const [currorders,setorders]=useState<order[]>([]);
+interface PageProps {
+  params: {
+    id: string;
+  };
+}
 
-  useEffect(()=>{
-      
-      console.log(orders);
-      setorders(orders);
+const page: React.FC<PageProps> = ({ params }) => {
+  const [currorders, setorders] = useState<orderItem[]>([]);
+  const [total_cost, setTotal_cost] = useState(0);
+  const router = useRouter();
 
-  },[])
+  useEffect(() => {
+    let accessToken = localStorage.getItem("accessToken");
+    console.log(params.id);
+    axios
+      .get(
+        `${BACKEND}/api/order/getOrderedItems?order_id=${params.id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      )
+      .then((res) => {
+        setorders(res.data.items);
+        setTotal_cost(res.data.total_cost);
+      })
+      .catch((err) => console.log(err));
+  }, []);
 
   const handlepayment = (e: any) => {
     e.preventDefault();
-
-    // fetch price alone from order id
-
-    console.log(window);
-
-    const order_id="order_OJa5dmI3ghv4mN";
-
-    const options = {
-      key: "rzp_test_BId9XKXtg6oGMG", 
-      amount: "50000",
-      currency: "INR",
-      name: "dsp",
-      description: "dsp",
-      image: "https://example.com/your_logo",
-      order_id: order_id,       
-      callback_url: `http://localhost:8000/api/payment/verifyPayment?order_id=${order_id}`,
-      notes: {
-        address: "Razorpay Corporate Office",
-      },
-      theme: {
-        color: "#3399cc",
-      },
-    };
-
-    const razor = new window.Razorpay(options);
-    razor.open();
+    router.push(`/payment/${params.id}`);
   };
-  
-
 
   return (
     <div className="pt-[10vh] px-5">
       <Table className="mb-[12vh]">
-        <TableCaption>A list of your ordered products.</TableCaption>
+        <TableCaption>A list of your products.</TableCaption>
         <TableHeader className="font-medium">
           <TableRow>
             <TableHead className="">Product</TableHead>
             <TableHead>Price (&#8377;)</TableHead>
-            <TableHead>Count</TableHead>
+            <TableHead>Quantity</TableHead>
             <TableHead className="text-right">Amount (&#8377;)</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {
-          currorders.map((item)=>(
-          <TableRow>
-            <TableCell className="whitespace-nowrap">{item.name}</TableCell>
-            <TableCell>{item.price}</TableCell>
-            <TableCell>{item.count}</TableCell>
-            <TableCell className="text-right">{item.price * item.count}</TableCell>
-          </TableRow>
-            ) )
-          }
+          {currorders.map((item) => (
+            <TableRow>
+              <TableCell className="whitespace-nowrap">{item.name}</TableCell>
+              <TableCell>{parseFloat(item.price).toFixed(2)}</TableCell>
+              <TableCell>{item.count}</TableCell>
+              <TableCell className="text-right">
+                {(parseFloat(item.price) * item.count).toFixed(2)}
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
         <TableFooter className="font-bold">
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className="text-right">$2,500.00</TableCell>
-        </TableRow>
-      </TableFooter>
+          <TableRow>
+            <TableCell colSpan={3}>Total</TableCell>
+            <TableCell className="text-right">{total_cost}</TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
 
-    <div className="h-[10vh] border-[0px] border-black fixed bottom-0 left-0 right-0 flex justify-between items-center px-[3vw] bg-white">
-        <Button className="bg-white text-black hover:text-white border-[1px] border-black">Cancel</Button>
-        <Button>Proceed</Button>
-    </div>
-
+      <div className="h-[10vh] border-[0px] border-black fixed bottom-0 left-0 right-0 flex justify-between items-center px-[3vw] bg-white">
+        <Button
+          className="bg-white text-black hover:text-white border-[1px] border-black"
+          onClick={() => router.push("/product")}
+        >
+          Cancel
+        </Button>
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button>Proceed</Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Before proceeding with your payment, please take a moment to
+                review the details of your order carefully.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={handlepayment}>
+                Continue
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </div>
     </div>
   );
 };

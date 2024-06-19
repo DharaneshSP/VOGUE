@@ -25,11 +25,11 @@ app.use("/api/order",orderroutes);
 
 
 app.get("/", async (req: Request, res: Response) => {
-  res.send("Hello World...dsp11");
+  res.send("Hello World");
 });
 
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`listening on port.. ${PORT}`);
+  console.log(`listening on port... ${PORT}`);
 });

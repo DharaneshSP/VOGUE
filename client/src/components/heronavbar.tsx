@@ -3,9 +3,11 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import shoppingbag from '../../public/shoppingbag.png';
-import user from '../../public/user.png'; 
-import Image from 'next/image'
+import shoppingbag from "../../public/shoppingbag.png";
+import user from "../../public/user.png";
+import Image from "next/image";
+import Link from "next/link";
+import { BACKEND } from "@/utils/constants";
 
 interface Data {
   id: string;
@@ -14,48 +16,62 @@ interface Data {
 }
 
 const navbar = () => {
-  const [data, setData] = useState<Data>();
+  const [auth, setauth] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
-    const accessToken = localStorage.getItem("accessToken") as string;
+    const accessToken = localStorage.getItem("accessToken");
 
-  if(0){
-    if (0 && !accessToken) router.push("/login");
+    if (!accessToken) setauth(false);
     else {
       axios
-        .get("http://localhost:8000/api/auth/verifyUser", {
+        .get(`${BACKEND}/api/auth/verifyUser`, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         })
         .then((response) => {
-          if (!response.data.auth && 1) router.push("/login");
+          if (!response.data.auth) setauth(false);
           else {
-            console.log(response.data);
-            setData({
-              id: response.data.user.user_id,
-              email: response.data.user.user_email,
-              name: response.data.user.user_name,
-            });
+            console.log(111);
+            setauth(true);
           }
         })
         .catch((err) => {
-          if (0) {
-            router.push("/login");
-          }
+          setauth(false);
         });
-    }};
+    }
   }, []);
 
+  const navLinks = [
+    {
+      img: shoppingbag,
+      alt: "shop",
+      link: auth ? "/product" : "/",
+      authRequired: false,
+    },
+    {
+      img: user,
+      alt: "user",
+      link: "/login",
+      authRequired: true,
+    },
+  ];
+
   return (
-    <div className=" h-[4rem] border border-0 border-black  z-50 fixed left-0 right-0 flex justify-between items-center px-5">
-       <div className="font-lato ">VOGE</div>
-       <div className="flex gap-5 ">
-        <button><Image src={shoppingbag} height={15} width={15} alt="shop"/></button>
-        <button><Image src={user} height={15} width={15} alt="shop"/></button>
-       </div>
-    
+    <div className=" h-[4rem] border-0 border-black  z-50 fixed left-0 right-0 flex justify-between items-center px-5">
+      <Link href="/" className="font-lato ">
+        VOGUE
+      </Link>
+      <div className="flex gap-5 ">
+        {navLinks
+          .filter((link) => link.authRequired || auth)
+          .map((link) => (
+            <Link href={link.link}>
+              <Image src={link.img} height={15} width={15} alt={link.alt} />
+            </Link>
+          ))}
+      </div>
     </div>
   );
 };

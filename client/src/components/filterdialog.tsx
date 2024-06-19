@@ -1,80 +1,92 @@
-"use client";
-
 import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+  DialogTrigger
 } from "@/components/ui/dialog";
-
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useProductStore } from "@/utils/store";
-import { products } from "@/utils/products";
+
+interface Product {
+  category: string;
+  description: string;
+  id: string;
+  img_url: string;
+  name: string;
+  price: string;
+  seller_id: string;
+  tags: string;
+  rating?: number; 
+}
+
+type PriceLimit = {
+  "0": number;
+  "200": number;
+  "500": number;
+  "1000": number;
+};
+
+type RateLimit = {
+  "2": number;
+  "3": number;
+  "4": number;
+  "5": number;
+};
 
 const FilterDialog = () => {
-  const [category, setCategory] = useState("All");
-  const [price, setPrice] = useState("All");
-  const [rating, setRating] = useState("All");
+  const [category, setCategory] = useState<"All" | "Clothing" | "Footwear" | "Accessories" | "Cosmetics">("All");
+  const [price, setPrice] = useState<keyof PriceLimit | "All">("All");
+  const [rating, setRating] = useState<"All" | "2" | "3" | "4" | "5">("All");
 
   const { currproducts, setcurrProducts } = useProductStore();
-  const [originalProducts, setOriginalProducts] = useState([]);
-  const [done, setdone] = useState<Boolean>(false);
+  const [originalProducts, setOriginalProducts] = useState<Product[]>([]);
+  const [done, setDone] = useState<boolean>(false);
 
   useEffect(() => {
-    if (done == false && currproducts.length > 0) {
+    if (!done && currproducts.length > 0) {
       setOriginalProducts(currproducts);
-      setdone(true);
+      setDone(true);
     }
-  }, [currproducts]);
+  }, [currproducts, done]);
 
-  const filterlist = () => {
-    const check = (product) => {
-      let pricelimit = { "0": 199, "200": 499, "500": 999, "1000": 9999999 };
-      let ratelimit = { "2": 2.9, "3": 3.9, "4": 4.9, "5": 5 };
+  const filterList = () => {
+    const check = (product: Product) => {
+      let pricelimit: PriceLimit = { "0": 199, "200": 499, "500": 999, "1000": 9999999 };
+      let ratelimit: RateLimit = { "2": 2.9, "3": 3.9, "4": 4.9, "5": 5 };
 
       return (
-        (category == "All" || product.category == category) &&
-        (price == "All" ||
-          (product.price >= parseInt(price) &&
-            product.price <= pricelimit[price])) &&
-        (rating == "All" ||
-          (product.rating >= parseInt(rating) &&
-            product.rating <= ratelimit[rating]))
+        (category === "All" || product.category === category) &&
+        (price === "All" ||
+          (parseFloat(product.price) >= pricelimit[price] && parseFloat(product.price) <= pricelimit[price])) &&
+        (rating === "All" || !product.rating || (product.rating >= parseFloat(rating) && product.rating <= ratelimit[rating]))
       );
     };
 
-    const filteredproducts = originalProducts.filter((product) =>
-      check(product),
-    );
-    setcurrProducts(filteredproducts);
+    const filteredProducts = originalProducts.filter(product => check(product));
+    setcurrProducts(filteredProducts);
   };
 
-  const handleCategoryChange = (value) => {
-    setCategory(value);
+  const handleCategoryChange = (value: string) => {
+    setCategory(value as typeof category);
   };
 
-  const handlePriceChange = (value) => {
-    setPrice(value);
+  const handlePriceChange = (value: string) => {
+    setPrice(value as typeof price);
   };
 
-  const handleRatingChange = (value) => {
-    setRating(value);
+  const handleRatingChange = (value: string) => {
+    setRating(value as typeof rating);
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button variant="outline" className="rounded-lg px-4 py-2">
-            <FilterIcon className="w-5 h-5 mr-2" />
-            Filter
+          <FilterIcon className="w-5 h-5 mr-2" />
+          Filter
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
@@ -142,7 +154,6 @@ const FilterDialog = () => {
           <section>
             <Label>Rating</Label>
             <RadioGroup
-              disabled
               className="pt-2"
               value={rating}
               onValueChange={handleRatingChange}
@@ -171,7 +182,7 @@ const FilterDialog = () => {
           </section>
         </div>
         <DialogClose asChild>
-          <Button type="button" onClick={filterlist} variant="secondary">
+          <Button type="button" onClick={filterList} variant="secondary">
             Filter
           </Button>
         </DialogClose>
@@ -182,8 +193,7 @@ const FilterDialog = () => {
 
 export default FilterDialog;
 
-
-function FilterIcon(props) {
+function FilterIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
       {...props}
@@ -199,6 +209,6 @@ function FilterIcon(props) {
     >
       <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
     </svg>
-  )
+  );
 }
 

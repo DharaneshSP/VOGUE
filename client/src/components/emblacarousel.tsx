@@ -4,7 +4,6 @@ import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 import one from '../../public/one.jpg'
 import two from '../../public/two.jpg';
-import three from '../../public/three.jpg';
 import four from '../../public/four.jpg';
 import six from '../../public/six.jpg'
 

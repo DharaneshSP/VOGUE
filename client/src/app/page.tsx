@@ -1,8 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
+import React from "react";
 import { EmblaOptionsType } from "embla-carousel";
 import EmblaCarousel from "@/components/emblacarousel";
 import HeroNavbar from "@/components/heronavbar";
@@ -23,12 +21,10 @@ const page = () => {
       <EmblaCarousel slides={SLIDES} options={OPTIONS} />
       <Fashion />
       <div className="min h-screen flex justify-center items-center bg-women bg-fixed bg-no-repeat bg-cover bg-center transition-smooth">
-        <h1>parallax</h1>
       </div>
 
       <Services />
       <div className="min h-screen flex justify-center items-center bg-men bg-fixed bg-no-repeat bg-cover bg-center transition-smooth">
-        <h1>parallax</h1>
       </div>
     </div>
   );

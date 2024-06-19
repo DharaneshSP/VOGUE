@@ -1,61 +1,118 @@
-import React from 'react'
+"use client"
+
+
+import React, { useEffect, useState } from 'react'
 
 import {Button} from "@/components/ui/button"
+import axios from 'axios';
 
-const product={
+import {BACKEND} from '@/utils/constants'
 
-  name:"cool shirtt cool cool coolcool cool",
-  img_url1:"https://m.media-amazon.com/images/I/71m-asaoNNL._AC_SX425_.jpg",
-  img_url:"https://rukminim2.flixcart.com/image/850/1000/xif0q/trouser/e/s/z/30-tu1-vebnor-original-imagmy6hhhz62qzn.jpeg?q=90&crop=false",
-  price:200,
-  description:"a nice shirt aaa aa aa aa aa aa aa aaa aa aa aa aa aa aaa aa aa aa aa aa aa aa aa aa aa aa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aaa aa aaa"
-
+interface PageProps{
+  params:{
+    id:string;
+  }  
 }
 
+interface Product{
+  category:string;
+  description:string;
+  img_url:string;
+  name:string;
+  price:string;
+  seller_name:string;
+}
 
-const page = ({params}) => {
+const initialProduct: Product = {
+  category: '',
+  description: '',
+  img_url: '',
+  name: '',
+  price: '',
+  seller_name: ''
+};
 
- const backgroundImageStyle = {
-    backgroundImage: `url(${product.img_url1})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    backgroundSize: 'contain',
-  };
+const page:React.FC<PageProps> = ({params}) => {
+
+  const [product,setProduct]=useState<Product>(initialProduct);
+  const [show,setshow]=useState<boolean>(false);
+
+useEffect(()=>{
+    
+    let id=params.id;
+    let accessToken=localStorage.getItem("accessToken");
+    axios.get(`${BACKEND}/api/product/getProductDetails?id=${id}`,{
+headers:{
+Authorization:`Bearer ${accessToken}`
+}
+    })
+    .then((res)=>{setProduct(res.data.data[0]); setshow(true)  })
+    .catch((err)=>console.log(err))
+
+
+},[])
+
+  const addToCart=()=>{
+
+
+
+    let accessToken=localStorage.getItem("accessToken");
+    
+   axios.post(`${BACKEND}/api/cart/addToCart`,{product_id:params.id},{
+        headers:{
+          Authorization: `Bearer ${accessToken}`
+          } 
+    })
+    .then((res)=>console.log(res))
+    .catch((err)=>console.log(err));
+
+  }
+
 
   return (
-    <div className="pt-[12vh]">
-    <div className="flex flex-wrap w-full h-full justify-center items-start gap-4 px-2">
-       <div className="p-3 max-w-full border w-[58vh] border-[1px]  border-gray-800 h-[60vh] md:h-[70vh] lg:h-[70vh] rounded-lg shadow-lg">
-     <div className={`border border-0 border-black h-[100%] w-full flex justify-center item-center`} style={backgroundImageStyle}>
+ 
+   <div className="pt-[10vh] h-full w-screen">
+   {show && 
+    <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto px-4 py-4">
+      <div className="grid gap-6">
+        <img
+          src={product.img_url}
+          alt="Product Image"
+          width={100}
+          height={100}
+          className="rounded-lg object-cover w-full aspect-square"
+        />
       </div>
-  </div>
-
-    <div className="max-w-full border border-[1px] border-black w-full lg:w-[50vw] lg:w-[70vw] px-3 pl-5 pb-2 shadow-lg rounded-lg">
-
-    <div className="py-3 font-medium text-4xl font-lato uppercase">
-      {product.name}
+      <div className="grid gap-4">
+        <div className="grid gap-2">
+          <h1 className="text-3xl font-bold">{product.name}</h1>
+          <p className="text-muted-foreground">
+           {product.description}          </p>
+        </div>
+        <div className="grid gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Category:</span>
+            <span className="text-sm text-muted-foreground">{product.category}</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Seller:</span>
+            <span className="text-sm text-muted-foreground">{product.seller_name}</span>
+          </div>
+        </div>
+        <div className="grid gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium">Price:</span>
+            <span className="text-2xl font-bold">&#8377; {product.price}</span>
+          </div>
+          <Button onClick={addToCart} size="lg">Add to Cart</Button>
+        </div>
+      </div>
     </div>
-    <div className="py-3 border-x-gray-50 border-[1px] font-medium font-robotocondensed text-3xl">
-      &#8377; {product.price}
+    }
     </div>
-    <div className="py-3 font-medium font-lato pt-2 uppercase">
-        {product.description}
-    </div>
-    {/* <div className="py-3 border-x-gray-50 border-[1px] font-robotocondensed text-3xl">
-      seller : kevin
-    </div> */}
+    )
+  
 
-    <div className="py-3">
-      <Button>Add To Cart</Button> 
-    </div>
-
-
-    </div>
-
-  </div>
-    
-    </div>
-  )
-}
+ }
 
 export default page

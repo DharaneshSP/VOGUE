@@ -7,8 +7,6 @@ export const addToCart = async (req: Request, res: Response) => {
 
   const id = user.user_id;
 
-  console.log("id =", id, " pid= ", product_id);
-
   const cartId = uuid();
   const count = 1;
 
@@ -17,7 +15,6 @@ export const addToCart = async (req: Request, res: Response) => {
     [cartId, id, product_id, count]
   );
 
-  console.log(cartRecord.rows);
 
   res.json({ done: 1, data: cartRecord.rows });
 };
@@ -25,18 +22,34 @@ export const addToCart = async (req: Request, res: Response) => {
 export const getCart = async (req: Request, res: Response) => {
   const { user } = req.body;
   const id = user.user_id;
-  //const seller_id=await pool.query("SELECT seller_id FROM sellers where user_id = $1",[id]);
+
   const cartProducts = await pool.query(
     "select * from products join cart on products.id = cart.product_id where cart.user_id = $1",
     [id]
   );
 
-//  console.log(cartProducts.rows);
-  //
+  return res.json({data:cartProducts});
 
-  console.log(cartProducts);
-
-  return res.json({1:cartProducts});
-
- // return res.json({ data: cartProducts.rows });
 };
+
+export const setQuantity=async(req:Request,res:Response)=>{
+
+  const {id,count}=req.body;
+
+  console.log(id,req.body);
+ 
+  const result=await pool.query("UPDATE cart SET count=$1 WHERE id=$2",[count,id]);
+ 
+  return res.json({done:"done"});
+
+}
+
+export const deleteCartItem=async(req:Request,res:Response)=>{
+
+  const id=req.query.id;
+
+  await pool.query("DELETE from cart WHERE id=$1",[id]);
+
+  return res.json({done:"done"});
+
+}

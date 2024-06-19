@@ -2,6 +2,8 @@ CREATE TABLE users (
     id TEXT PRIMARY KEY,
     email TEXT UNIQUE NOT NULL,
     name TEXT NOT NULL,
+    address TEXT,
+    mobile_no TEXT;
     password TEXT NOT NULL
 );
 
@@ -23,7 +25,9 @@ CREATE TABLE products (
     description TEXT, 
     price NUMERIC(10, 2) CHECK (price >= 0),
     seller_id TEXT NOT NULL,
-    image_url TEXT,
+    img_url TEXT,
+    category TEXT NOT NULL CHECK (category IN ('Clothing','Footwear','Accessories','Cosmetics')),
+    tags TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (seller_id) REFERENCES sellers(id) ON DELETE CASCADE
